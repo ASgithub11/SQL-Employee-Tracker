@@ -1,8 +1,11 @@
+-- Drop and create database
 DROP DATABASE IF EXISTS employee_db;
 CREATE DATABASE employee_db;
 
+-- Connect to the employee_db database
 \c employee_db;
 
+-- Create department, role, and employee tables
 CREATE TABLE department (
     id SERIAL PRIMARY KEY,
     name VARCHAR(30) UNIQUE NOT NULL
