@@ -2,51 +2,83 @@
 SELECT * FROM department;
 
 -- View all roles
-SELECT * FROM role;
+SELECT
+    role.id AS "Role ID",
+    role.title AS "Title",
+    role.salary AS "Salary",
+    department.name AS "Department"
+FROM role
+JOIN department ON role.department_id = department.id;
 
 -- View all employees
-SELECT * FROM employee;
+SELECT
+    employee.id AS "Employee ID",
+    employee.first_name AS "First Name",
+    employee.last_name AS "Last Name",
+    role.title AS "Title",
+    role.salary AS "Salary",
+    department.name AS "Department",
+    CONCAT(manager.first_name, ' ', manager.last_name) AS "Manager"
+FROM employee
+JOIN role ON employee.role_id = role.id
+JOIN department ON role.department_id = department.id
+LEFT JOIN employee manager ON employee.manager_id = manager.id;
 
 -- Add department
-INSERT INTO department (name) VALUES ('');
+INSERT INTO department (name) VALUES ($1)
+RETURNING *;
 
 -- Add role
-INSERT INTO role (title, salary, department_id) VALUES ('', '', '');
+INSERT INTO role (title, salary, department_id) VALUES ($1, $2, $3)
+RETURNING *;
 
 -- Add employee
-INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES ('', '', '', '');
+INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES ($1, $2, $3, $4)
+RETURNING *;
 
 -- Update employee's role
 UPDATE employee
-SET role_id = ''
-WHERE id = '';
+SET role_id = $1
+WHERE id = $2;
 
 -- Update employee's manager
 UPDATE employee
-SET manager_id = ''
-WHERE id = '';
+SET manager_id = $1
+WHERE id = $2;
 
 -- View employees by manager
-SELECT * FROM employee
-WHERE manager_id = '';
+SELECT employee.id, employee.first_name, employee.last_name
+FROM employee
+WHERE employee.manager_id = $1;
 
 -- View employees by department
-SELECT * FROM employee
-WHERE role_id = '';
+SELECT 
+    employee.id AS "Employee ID", 
+    employee.first_name AS "First Name", 
+    employee.last_name AS "Last Name", 
+    role.title AS "Title", 
+    role.salary AS "Salary",
+    department.name AS "Department",
+    CONCAT(manager.first_name, ' ', manager.last_name) AS "Manager"
+FROM employee
+JOIN role ON employee.role_id = role.id
+JOIN department ON role.department_id = department.id
+LEFT JOIN employee manager ON employee.manager_id = manager.id
+WHERE department.name = $1;
 
 -- Delete department
 DELETE FROM department
-WHERE id = '';
+WHERE id = $1;
 
 -- Delete role
 DELETE FROM role
-WHERE id = '';
+WHERE id = $1;
 
 -- Delete employee
 DELETE FROM employee
-WHERE id = '';
+WHERE id = $1;
 
 -- View total utilized budget of a department
-SELECT department_id, SUM(salary) AS utilized_budget
-FROM role
-GROUP BY department_id;
+SELECT SUM(role.salary) AS "Total Utilized Budget"
+FROM employee
+JOIN role ON employee.role_id = role.id;
