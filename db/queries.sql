@@ -79,6 +79,9 @@ DELETE FROM employee
 WHERE id = $1;
 
 -- View total utilized budget of a department
-SELECT SUM(role.salary) AS "Total Utilized Budget"
+SELECT department.name AS "Department", SUM(role.salary) AS "Total Utilized Budget"
 FROM employee
-JOIN role ON employee.role_id = role.id;
+JOIN role ON employee.role_id = role.id
+JOIN department ON role.department_id = department.id
+WHERE department.id = $1
+GROUP BY department.name;
