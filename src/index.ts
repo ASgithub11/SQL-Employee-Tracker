@@ -280,7 +280,7 @@ const mainMenu = async () => {
                 console.log('Department deleted');
                 break;
 
-            // View department budget
+            // View department budget(the combined salaries of all employees in that department)
             case 'View Department Budget':
                 const sumOfSalaries = await viewDepartmentBudget();
                 console.table(sumOfSalaries);
